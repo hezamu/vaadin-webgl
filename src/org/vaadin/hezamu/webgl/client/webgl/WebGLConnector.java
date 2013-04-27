@@ -55,13 +55,14 @@ public class WebGLConnector extends AbstractComponentConnector implements
 		getWidget().addMouseMoveHandler(new MouseMoveHandler() {
 			@Override
 			public void onMouseMove(MouseMoveEvent event) {
-				final MouseEventDetails md = MouseEventDetailsBuilder
-						.buildMouseEventDetails(event.getNativeEvent(),
-								getWidget().getElement());
+				if (getState().mouseTrackFPS > 0
+						&& System.currentTimeMillis() - time >= 1000 / getState().mouseTrackFPS) {
+					final MouseEventDetails md = MouseEventDetailsBuilder
+							.buildMouseEventDetails(event.getNativeEvent(),
+									getWidget().getElement());
 
-				if (getState().trackMouse
-						&& System.currentTimeMillis() - time > 33) {
 					rpc.mouseMoved(md);
+
 					time = System.currentTimeMillis();
 				}
 			}

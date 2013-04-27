@@ -6,7 +6,6 @@ import org.vaadin.hezamu.webgl.client.webgl.Shape;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
@@ -24,9 +23,7 @@ public class WebGLUI extends UI {
 
 	private WebGL webgl;
 	private TextArea vs, fs;
-	private CheckBox trackMouse;
-	private TextField clearColor, translation, fov, minDist, maxDist;
-	private long time;
+	private TextField clearColor, translation, fov, minDist, maxDist, fps;
 
 	private final ValueChangeListener updater = new ValueChangeListener() {
 		@Override
@@ -97,13 +94,8 @@ public class WebGLUI extends UI {
 								"45"));
 						addComponent(minDist = createTF("Min distance", "0.1"));
 						addComponent(maxDist = createTF("Max distance", "100"));
-
-						addComponent(trackMouse = new CheckBox() {
-							{
-								setCaption("Track mouse");
-								addValueChangeListener(updater);
-							}
-						});
+						addComponent(fps = createTF(
+								"Mouse track FPS (0=disable)", "0"));
 					}
 
 					private TextField createTF(final String caption,
@@ -126,9 +118,6 @@ public class WebGLUI extends UI {
 		webgl.addMouseMoveListener(new MouseMoveListener() {
 			@Override
 			public void mouseMoved(MouseEventDetails med) {
-				System.out.println("Frame len "
-						+ (System.currentTimeMillis() - time) + "ms");
-				time = System.currentTimeMillis();
 				// Triangle rotation follows mostly horizontal movement
 				webgl.getState().shapes[0].rx = med.getClientY() / 250f;
 				webgl.getState().shapes[0].ry = med.getClientX() / 50f;
@@ -201,7 +190,7 @@ public class WebGLUI extends UI {
 	private void updateState() {
 		webgl.getState().vertexShaderSource = vs.getValue();
 		webgl.getState().fragmentShaderSource = fs.getValue();
-		webgl.getState().trackMouse = trackMouse.getValue();
+		webgl.getState().mouseTrackFPS = (int) parseTf(fps)[0];
 
 		webgl.getState().clearColor = parseTf(clearColor);
 		webgl.getState().translation = parseTf(translation);

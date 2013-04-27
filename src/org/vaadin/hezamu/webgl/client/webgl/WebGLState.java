@@ -8,7 +8,7 @@ public class WebGLState extends com.vaadin.shared.AbstractComponentState {
 	public float[] viewPort;
 	public float[] translation;
 	public Shape[] shapes;
-	public boolean trackMouse;
+	public int mouseTrackFPS;
 	public float fov;
 	public float minDist;
 	public float maxDist;
